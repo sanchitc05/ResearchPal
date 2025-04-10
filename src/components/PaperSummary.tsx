@@ -28,7 +28,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
-const PaperSummary: React.FC = () => {
+const PaperSummary = () => {
   const [summaryLength, setSummaryLength] = useState<"short" | "medium" | "detailed">("medium");
   const [question, setQuestion] = useState("");
   const [isAsking, setIsAsking] = useState(false);
@@ -356,7 +356,7 @@ const PaperSummary: React.FC = () => {
                 
                 <TabsContent value="apa" className="mt-4">
                   <div className="bg-scholar-cream/50 p-4 rounded-md font-mono text-sm mb-3">
-                    Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, L., & Polosukhin, I. (2017). Attention is all you need. In Advances in Neural Information Processing Systems (pp. 5998-6008).
+                    {`Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, L., & Polosukhin, I. (2017). Attention is all you need. In Advances in Neural Information Processing Systems (pp. 5998-6008).`}
                   </div>
                   <Button variant="outline" size="sm" className="flex items-center gap-1.5">
                     <Copy className="h-4 w-4" />
@@ -366,7 +366,7 @@ const PaperSummary: React.FC = () => {
                 
                 <TabsContent value="mla" className="mt-4">
                   <div className="bg-scholar-cream/50 p-4 rounded-md font-mono text-sm mb-3">
-                    Vaswani, Ashish, et al. "Attention is all you need." Advances in Neural Information Processing Systems. 2017.
+                    {`Vaswani, Ashish, et al. "Attention is all you need." Advances in Neural Information Processing Systems. 2017.`}
                   </div>
                   <Button variant="outline" size="sm" className="flex items-center gap-1.5">
                     <Copy className="h-4 w-4" />
@@ -376,7 +376,7 @@ const PaperSummary: React.FC = () => {
                 
                 <TabsContent value="chicago" className="mt-4">
                   <div className="bg-scholar-cream/50 p-4 rounded-md font-mono text-sm mb-3">
-                    Vaswani, Ashish, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. "Attention is all you need." In Advances in Neural Information Processing Systems, pp. 5998-6008. 2017.
+                    {`Vaswani, Ashish, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. "Attention is all you need." In Advances in Neural Information Processing Systems, pp. 5998-6008. 2017.`}
                   </div>
                   <Button variant="outline" size="sm" className="flex items-center gap-1.5">
                     <Copy className="h-4 w-4" />
@@ -386,7 +386,7 @@ const PaperSummary: React.FC = () => {
                 
                 <TabsContent value="harvard" className="mt-4">
                   <div className="bg-scholar-cream/50 p-4 rounded-md font-mono text-sm mb-3">
-                    Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A.N., Kaiser, L. and Polosukhin, I., 2017. Attention is all you need. Advances in Neural Information Processing Systems, pp.5998-6008.
+                    {`Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A.N., Kaiser, L. and Polosukhin, I., 2017. Attention is all you need. Advances in Neural Information Processing Systems, pp.5998-6008.`}
                   </div>
                   <Button variant="outline" size="sm" className="flex items-center gap-1.5">
                     <Copy className="h-4 w-4" />
@@ -396,13 +396,13 @@ const PaperSummary: React.FC = () => {
                 
                 <TabsContent value="bibtex" className="mt-4">
                   <div className="bg-scholar-cream/50 p-4 rounded-md font-mono text-sm mb-3 overflow-x-auto">
-                    @inproceedings{vaswani2017attention,<br />
-                    &nbsp;&nbsp;title = {Attention is all you need},<br />
-                    &nbsp;&nbsp;author = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, Lukasz and Polosukhin, Illia},<br />
-                    &nbsp;&nbsp;booktitle = {Advances in Neural Information Processing Systems},<br />
-                    &nbsp;&nbsp;pages = {5998--6008},<br />
-                    &nbsp;&nbsp;year = {2017}<br />
-                    }
+                    {`@inproceedings{vaswani2017attention,
+  title = {Attention is all you need},
+  author = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, Lukasz and Polosukhin, Illia},
+  booktitle = {Advances in Neural Information Processing Systems},
+  pages = {5998--6008},
+  year = {2017}
+}`}
                   </div>
                   <Button variant="outline" size="sm" className="flex items-center gap-1.5">
                     <Copy className="h-4 w-4" />

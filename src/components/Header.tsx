@@ -8,7 +8,7 @@ interface HeaderProps {
   toggleSidebar?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
+const Header = ({ toggleSidebar }: HeaderProps) => {
   return (
     <header className="w-full bg-white border-b border-scholar-lightgray px-4 py-3 sticky top-0 z-10">
       <div className="flex items-center justify-between">
