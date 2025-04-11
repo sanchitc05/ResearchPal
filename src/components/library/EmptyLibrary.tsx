@@ -1,8 +1,9 @@
 
+import React from "react";
 import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const EmptyLibrary = () => (
+const EmptyLibrary: React.FC = () => (
   <div className="text-center py-16 px-4">
     <BookOpen className="h-16 w-16 mx-auto mb-4 text-scholar-navy opacity-30" />
     <h3 className="text-xl font-medium mb-2">Your research library is empty</h3>
@@ -10,7 +11,9 @@ const EmptyLibrary = () => (
       Upload papers or provide URLs to build your personal research collection. 
       All papers will be processed by AI for easy searching and analysis.
     </p>
-    <Button className="bg-scholar-navy hover:bg-scholar-navy/90 text-white">Upload Your First Paper</Button>
+    <Button className="bg-scholar-navy hover:bg-scholar-navy/90 text-white">
+      Upload Your First Paper
+    </Button>
   </div>
 );
 

@@ -9,13 +9,13 @@ interface PaperGridProps {
 }
 
 const PaperGrid: React.FC<PaperGridProps> = ({ papers }) => {
-  if (papers.length === 0) {
+  if (!papers || papers.length === 0) {
     return <EmptyLibrary />;
   }
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {papers.map(paper => (
+      {papers.map((paper) => (
         <PaperCard key={paper.id} paper={paper} />
       ))}
     </div>

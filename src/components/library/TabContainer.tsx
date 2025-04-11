@@ -21,6 +21,12 @@ const TabContainer: React.FC<TabContainerProps> = ({
   savedPapers,
   summarizedPapers
 }) => {
+  // Ensure we're working with arrays, even if undefined is passed
+  const safeAllPapers = Array.isArray(allPapers) ? allPapers : [];
+  const safeRecentPapers = Array.isArray(recentPapers) ? recentPapers : [];
+  const safeSavedPapers = Array.isArray(savedPapers) ? savedPapers : [];
+  const safeSummarizedPapers = Array.isArray(summarizedPapers) ? summarizedPapers : [];
+
   return (
     <Tabs 
       value={activeTab} 
@@ -34,19 +40,19 @@ const TabContainer: React.FC<TabContainerProps> = ({
       </TabsList>
       
       <TabsContent value="all" className="mt-0">
-        <PaperGrid papers={allPapers} />
+        <PaperGrid papers={safeAllPapers} />
       </TabsContent>
       
       <TabsContent value="recent" className="mt-0">
-        <PaperGrid papers={recentPapers} />
+        <PaperGrid papers={safeRecentPapers} />
       </TabsContent>
       
       <TabsContent value="saved" className="mt-0">
-        <PaperGrid papers={savedPapers} />
+        <PaperGrid papers={safeSavedPapers} />
       </TabsContent>
       
       <TabsContent value="summarized" className="mt-0">
-        <PaperGrid papers={summarizedPapers} />
+        <PaperGrid papers={safeSummarizedPapers} />
       </TabsContent>
     </Tabs>
   );
