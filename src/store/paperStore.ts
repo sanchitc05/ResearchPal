@@ -90,10 +90,16 @@ export const usePaperStore = create<PaperStore>((set, get) => ({
   citations: { [demoTransformerPaper.id]: demoCitation },
   recentlyViewed: [demoTransformerPaper.id],
   
-  addPaper: (paper) => set((state) => ({
-    papers: [...state.papers, paper],
-    recentlyViewed: [paper.id, ...state.recentlyViewed.filter(id => id !== paper.id).slice(0, 9)]
-  })),
+  addPaper: (paper) => set((state) => {
+    // Check if paper already exists to prevent duplicate papers
+    if (state.papers.some(p => p.id === paper.id)) {
+      return {}; // Return empty object to prevent state update
+    }
+    return {
+      papers: [...state.papers, paper],
+      recentlyViewed: [paper.id, ...state.recentlyViewed.filter(id => id !== paper.id).slice(0, 9)]
+    };
+  }),
   
   uploadPaperFile: async (file) => {
     // In a real app, this would upload the file to a server
@@ -140,31 +146,59 @@ export const usePaperStore = create<PaperStore>((set, get) => ({
     });
   },
   
-  savePaper: (paperId) => set((state) => ({
-    papers: state.papers.map(paper => 
-      paper.id === paperId ? { ...paper, saved: true } : paper
-    )
-  })),
-  
-  unsavePaper: (paperId) => set((state) => ({
-    papers: state.papers.map(paper => 
-      paper.id === paperId ? { ...paper, saved: false } : paper
-    )
-  })),
-  
-  // Fix the viewPaper method to only update when necessary
-  viewPaper: (paperId) => set((state) => {
-    // Only update if the paper exists and isn't already at the top of recently viewed
-    if (state.papers.some(paper => paper.id === paperId) && state.recentlyViewed[0] !== paperId) {
-      return {
-        recentlyViewed: [
-          paperId, 
-          ...state.recentlyViewed.filter(id => id !== paperId).slice(0, 9)
-        ]
-      };
+  savePaper: (paperId) => set((state) => {
+    // Find the paper first
+    const paperExists = state.papers.some(p => p.id === paperId);
+    if (!paperExists) return {};
+    
+    // Only update if the paper exists and isn't already saved
+    if (state.papers.find(p => p.id === paperId)?.saved === true) {
+      return {}; // Paper is already saved, return empty object to prevent update
     }
-    // Return empty object to avoid state update when nothing changes
-    return {};
+    
+    return {
+      papers: state.papers.map(paper => 
+        paper.id === paperId ? { ...paper, saved: true } : paper
+      )
+    };
+  }),
+  
+  unsavePaper: (paperId) => set((state) => {
+    // Find the paper first
+    const paperExists = state.papers.some(p => p.id === paperId);
+    if (!paperExists) return {};
+    
+    // Only update if the paper exists and is currently saved
+    if (state.papers.find(p => p.id === paperId)?.saved === false) {
+      return {}; // Paper is already unsaved, return empty object to prevent update
+    }
+    
+    return {
+      papers: state.papers.map(paper => 
+        paper.id === paperId ? { ...paper, saved: false } : paper
+      )
+    };
+  }),
+  
+  // Optimize viewPaper to avoid unnecessary updates
+  viewPaper: (paperId) => set((state) => {
+    // First check if the paper exists
+    if (!state.papers.some(paper => paper.id === paperId)) {
+      return {}; // Paper doesn't exist, return empty object to prevent state update
+    }
+    
+    // Check if paper is already at the top of the recently viewed list
+    if (state.recentlyViewed[0] === paperId) {
+      return {}; // Already at the top, no need to update
+    }
+    
+    // Now update the recently viewed list
+    return {
+      recentlyViewed: [
+        paperId, 
+        ...state.recentlyViewed.filter(id => id !== paperId).slice(0, 9)
+      ]
+    };
   }),
   
   getPaperById: (id) => {
@@ -179,6 +213,10 @@ export const usePaperStore = create<PaperStore>((set, get) => ({
   },
   
   searchPapers: (query) => {
+    if (!query || !query.trim()) {
+      return get().papers;
+    }
+    
     const lowerQuery = query.toLowerCase();
     return get().papers.filter(paper => 
       paper.title.toLowerCase().includes(lowerQuery) || 

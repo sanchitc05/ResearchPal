@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useCallback } from "react";
 import Header from "@/components/Header";
 import Dashboard from "@/components/Dashboard";
 import ResearchLibrary from "@/components/ResearchLibrary";
@@ -26,23 +26,26 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const navigate = useNavigate();
   
-  // Use a single store access with a stable selector function to prevent infinite re-renders
-  // We create a memoized selector that returns an object with just what we need
-  const paperStats = usePaperStore(
-    // This function should remain stable between renders
-    (state) => ({
-      savedCount: state.papers.filter(paper => paper.saved).length,
-      recentCount: new Set(state.recentlyViewed).size,
-    })
+  // Use separate selectors with primitive returns to prevent unnecessary re-renders
+  const savedCount = usePaperStore(state => 
+    state.papers.filter(paper => paper.saved).length
   );
   
-  const handleTabChange = (tab: string) => {
+  const recentCount = usePaperStore(state => 
+    new Set(state.recentlyViewed).size
+  );
+  
+  const handleTabChange = useCallback((tab: string) => {
     setActiveTab(tab);
-  };
+  }, []);
+  
+  const toggleSidebar = useCallback(() => {
+    setSidebarOpen(prev => !prev);
+  }, []);
   
   return (
     <div className="min-h-screen flex flex-col">
-      <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      <Header toggleSidebar={toggleSidebar} />
       
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
@@ -53,7 +56,7 @@ const Index = () => {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                onClick={() => setSidebarOpen(!sidebarOpen)}
+                onClick={toggleSidebar}
                 className="hidden md:flex"
               >
                 {sidebarOpen ? (
@@ -120,7 +123,7 @@ const Index = () => {
               >
                 <BookmarkPlus className="h-5 w-5 mr-3" />
                 <span className={`${!sidebarOpen && 'md:hidden'}`}>
-                  Saved Papers {paperStats.savedCount > 0 && `(${paperStats.savedCount})`}
+                  Saved Papers {savedCount > 0 && `(${savedCount})`}
                 </span>
               </Button>
               <Button 
@@ -133,7 +136,7 @@ const Index = () => {
               >
                 <Clock className="h-5 w-5 mr-3" />
                 <span className={`${!sidebarOpen && 'md:hidden'}`}>
-                  Recently Viewed {paperStats.recentCount > 0 && `(${paperStats.recentCount})`}
+                  Recently Viewed {recentCount > 0 && `(${recentCount})`}
                 </span>
               </Button>
             </nav>
