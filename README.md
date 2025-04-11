@@ -70,35 +70,6 @@ Writing research papers is a time-consuming and often isolating process. Current
 
 ---
 
-## 🧭 System Workflow
-
-researchpal-frontend/
-├── public/
-├── src/
-│   ├── assets/
-│   ├── components/
-│   │   ├── Navbar.jsx
-│   │   ├── Editor.jsx
-│   │   ├── Auth/
-│   │   │   ├── Login.jsx
-│   │   │   └── Register.jsx
-│   │   └── Dashboard.jsx
-│   ├── pages/
-│   │   ├── Home.jsx
-│   │   ├── NewPaper.jsx
-│   │   ├── Trending.jsx
-│   │   └── Export.jsx
-│   ├── context/
-│   │   └── AuthContext.jsx
-│   ├── App.jsx
-│   ├── index.js
-│   └── styles/
-│       └── tailwind.css
-├── .env
-├── package.json
-└── tailwind.config.js
----
-
 ## 👥 Target Users
 
 - 🎓 Students  
