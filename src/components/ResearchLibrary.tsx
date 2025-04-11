@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { 
   Search, 
   Filter, 
@@ -46,7 +45,6 @@ const PaperCard: React.FC<{ paper: Paper }> = ({ paper }) => {
   };
 
   const handleViewPaper = () => {
-    // In a real app, this would navigate to a paper details page with the ID
     navigate("/");
     toast.success(`Viewing paper: ${paper.title}`);
   };
@@ -122,26 +120,36 @@ const EmptyLibrary = () => (
 
 const ResearchLibrary: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const papers = usePaperStore(state => state.papers);
-  const recentlyViewed = usePaperStore(state => state.recentlyViewed);
-  const searchPapers = usePaperStore(state => state.searchPapers);
+  const [activeTab, setActiveTab] = useState("all");
   
-  // Filter papers directly instead of using the removed helper functions
-  const savedPapers = papers.filter(paper => paper.saved);
-  const summarizedPapers = papers.filter(paper => paper.summarized);
-  const recentPapers = recentlyViewed
-    .map(id => papers.find(p => p.id === id))
-    .filter(Boolean) as Paper[];
+  const { papers, recentlyViewed, searchPapers } = usePaperStore(state => ({
+    papers: state.papers,
+    recentlyViewed: state.recentlyViewed,
+    searchPapers: state.searchPapers
+  }));
   
-  const [filteredPapers, setFilteredPapers] = useState<Paper[]>([]);
+  const savedPapers = useMemo(() => 
+    papers.filter(paper => paper.saved),
+    [papers]
+  );
   
-  // Update filtered papers when search term changes
-  React.useEffect(() => {
+  const summarizedPapers = useMemo(() => 
+    papers.filter(paper => paper.summarized),
+    [papers]
+  );
+  
+  const recentPapers = useMemo(() => 
+    recentlyViewed
+      .map(id => papers.find(p => p.id === id))
+      .filter(Boolean) as Paper[],
+    [recentlyViewed, papers]
+  );
+  
+  const filteredPapers = useMemo(() => {
     if (searchTerm.trim()) {
-      setFilteredPapers(searchPapers(searchTerm));
-    } else {
-      setFilteredPapers(papers);
+      return searchPapers(searchTerm);
     }
+    return papers;
   }, [searchTerm, papers, searchPapers]);
   
   return (
@@ -202,7 +210,11 @@ const ResearchLibrary: React.FC = () => {
         </div>
       </div>
       
-      <Tabs defaultValue="all">
+      <Tabs 
+        defaultValue="all" 
+        value={activeTab} 
+        onValueChange={setActiveTab}
+      >
         <TabsList className="mb-6">
           <TabsTrigger value="all">All Papers</TabsTrigger>
           <TabsTrigger value="recent">Recently Added</TabsTrigger>
