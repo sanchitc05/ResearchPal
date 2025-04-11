@@ -26,23 +26,15 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const navigate = useNavigate();
   
-  // Use a single store access for all paper data
-  const { papers, recentlyViewed } = usePaperStore(state => ({
-    papers: state.papers,
-    recentlyViewed: state.recentlyViewed,
-  }));
-  
-  // Derive saved papers count with useMemo to prevent unnecessary renders
-  const savedPapersCount = useMemo(() => 
-    papers.filter(paper => paper.saved).length, 
-    [papers]
+  // Use a single store access with a stable selector function to prevent infinite re-renders
+  // We create a memoized selector that returns an object with just what we need
+  const paperStats = usePaperStore(
+    // This function should remain stable between renders
+    (state) => ({
+      savedCount: state.papers.filter(paper => paper.saved).length,
+      recentCount: new Set(state.recentlyViewed).size,
+    })
   );
-  
-  // Derive recent papers with useMemo
-  const recentPapersCount = useMemo(() => {
-    const uniqueIds = new Set(recentlyViewed);
-    return uniqueIds.size;
-  }, [recentlyViewed]);
   
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -128,7 +120,7 @@ const Index = () => {
               >
                 <BookmarkPlus className="h-5 w-5 mr-3" />
                 <span className={`${!sidebarOpen && 'md:hidden'}`}>
-                  Saved Papers {savedPapersCount > 0 && `(${savedPapersCount})`}
+                  Saved Papers {paperStats.savedCount > 0 && `(${paperStats.savedCount})`}
                 </span>
               </Button>
               <Button 
@@ -141,7 +133,7 @@ const Index = () => {
               >
                 <Clock className="h-5 w-5 mr-3" />
                 <span className={`${!sidebarOpen && 'md:hidden'}`}>
-                  Recently Viewed {recentPapersCount > 0 && `(${recentPapersCount})`}
+                  Recently Viewed {paperStats.recentCount > 0 && `(${paperStats.recentCount})`}
                 </span>
               </Button>
             </nav>

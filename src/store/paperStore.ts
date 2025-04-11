@@ -162,7 +162,7 @@ export const usePaperStore = create<PaperStore>((set, get) => ({
         ]
       };
     }
-    return state;
+    return {};
   }),
   
   getPaperById: (id) => {

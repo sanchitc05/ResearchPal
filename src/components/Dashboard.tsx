@@ -16,19 +16,13 @@ import { usePaperStore } from "@/store/paperStore";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
-  // Use a single selector to get papers data to avoid multiple store subscriptions
-  const papers = usePaperStore(state => state.papers);
-  
-  // Use useMemo to derive these values without triggering renders
-  const savedPapersCount = useMemo(() => 
-    papers.filter(paper => paper.saved).length, 
-    [papers]
-  );
-  
-  const summarizedPapersCount = useMemo(() => 
-    papers.filter(paper => paper.summarized).length, 
-    [papers]
-  );
+  // Use a single selector to get all needed data at once
+  const paperStats = usePaperStore(state => ({
+    papersCount: state.papers.length,
+    savedCount: state.papers.filter(paper => paper.saved).length,
+    summarizedCount: state.papers.filter(paper => paper.summarized).length,
+    papers: state.papers.slice(0, 3) // Get just the first 3 papers for display
+  }));
   
   const navigate = useNavigate();
 
@@ -54,15 +48,15 @@ const Dashboard: React.FC = () => {
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <span>Papers</span>
-                <span className="font-medium">{papers.length}</span>
+                <span className="font-medium">{paperStats.papersCount}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Citations</span>
-                <span className="font-medium">{papers.length}</span>
+                <span className="font-medium">{paperStats.papersCount}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Saved summaries</span>
-                <span className="font-medium">{summarizedPapersCount}</span>
+                <span className="font-medium">{paperStats.summarizedCount}</span>
               </div>
               <Button 
                 className="w-full mt-4 bg-scholar-navy hover:bg-scholar-navy/90 text-white"
@@ -129,9 +123,9 @@ const Dashboard: React.FC = () => {
             <CardDescription>Your research journey</CardDescription>
           </CardHeader>
           <CardContent>
-            {papers.length > 1 ? (
+            {paperStats.papers.length > 1 ? (
               <div className="space-y-3">
-                {papers.slice(0, 3).map((paper, index) => (
+                {paperStats.papers.map((paper, index) => (
                   <div key={paper.id} className="flex items-start gap-3 pb-2 border-b border-gray-100 last:border-0">
                     <div className="bg-scholar-cream/50 rounded-full p-2 mt-1">
                       <FileText className="h-4 w-4 text-scholar-navy" />
