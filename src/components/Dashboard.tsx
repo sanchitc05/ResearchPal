@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useMemo } from "react";
 import { 
   BookOpen, 
   FilePlus, 
@@ -16,17 +16,18 @@ import { usePaperStore } from "@/store/paperStore";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
-  // Use primitive selectors instead of object selectors to prevent infinite re-renders
-  const papersCount = usePaperStore(state => state.papers.length);
-  const savedCount = usePaperStore(state => state.papers.filter(p => p.saved).length);
-  const summarizedCount = usePaperStore(state => state.papers.filter(p => p.summarized).length);
-  
-  // Use a stable reference for the sample papers
-  const samplePapers = usePaperStore(state => 
-    state.papers.slice(0, 3)
-  );
-  
   const navigate = useNavigate();
+  
+  // Get papers array once from the store
+  const papers = usePaperStore(state => state.papers);
+  
+  // Memoize derived values to prevent recalculation on each render
+  const papersCount = useMemo(() => papers.length, [papers]);
+  const savedCount = useMemo(() => papers.filter(p => p.saved).length, [papers]);
+  const summarizedCount = useMemo(() => papers.filter(p => p.summarized).length, [papers]);
+  
+  // Memoize sample papers
+  const samplePapers = useMemo(() => papers.slice(0, 3), [papers]);
 
   return (
     <div className="p-6">

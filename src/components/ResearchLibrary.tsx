@@ -8,12 +8,12 @@ const ResearchLibrary: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   
-  // Use stable selectors for better performance
-  const papers = usePaperStore(state => state.papers);
-  const recentlyViewed = usePaperStore(state => state.recentlyViewed);
+  // Get data from store once
+  const papers = usePaperStore(state => state.papers || []);
+  const recentlyViewed = usePaperStore(state => state.recentlyViewed || []);
   const searchPapers = usePaperStore(state => state.searchPapers);
   
-  // Memoize derived data to prevent recalculations on every render
+  // Memoize derived data
   const filteredPapers = useMemo(() => {
     if (searchTerm.trim()) {
       return searchPapers(searchTerm);
@@ -32,7 +32,7 @@ const ResearchLibrary: React.FC = () => {
   );
   
   const recentPapers = useMemo(() => {
-    if (!recentlyViewed || !papers) return [];
+    if (!recentlyViewed.length) return [];
     return recentlyViewed
       .map(id => papers.find(p => p.id === id))
       .filter(Boolean) as typeof papers;
