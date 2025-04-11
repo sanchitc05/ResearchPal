@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import Header from "@/components/Header";
 import Dashboard from "@/components/Dashboard";
 import ResearchLibrary from "@/components/ResearchLibrary";
@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { usePaperStore } from "@/store/paperStore";
 
 const Index = () => {
@@ -42,6 +42,10 @@ const Index = () => {
   const toggleSidebar = useCallback(() => {
     setSidebarOpen(prev => !prev);
   }, []);
+
+  const handleNavigate = useCallback((path: string) => {
+    navigate(path);
+  }, [navigate]);
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -91,7 +95,7 @@ const Index = () => {
               <Button 
                 variant="ghost" 
                 className={`w-full justify-start mb-1 ${!sidebarOpen && 'md:justify-center'}`}
-                onClick={() => navigate("/paper/transformer-paper-001")}
+                onClick={() => handleNavigate("/paper/transformer-paper-001")}
               >
                 <Sparkles className="h-5 w-5 mr-3" />
                 <span className={`${!sidebarOpen && 'md:hidden'}`}>AI Insights</span>
@@ -99,7 +103,7 @@ const Index = () => {
               <Button 
                 variant="ghost" 
                 className={`w-full justify-start mb-1 ${!sidebarOpen && 'md:justify-center'}`}
-                onClick={() => navigate("/citation")}
+                onClick={() => handleNavigate("/citation")}
               >
                 <FileText className="h-5 w-5 mr-3" />
                 <span className={`${!sidebarOpen && 'md:hidden'}`}>Citations</span>

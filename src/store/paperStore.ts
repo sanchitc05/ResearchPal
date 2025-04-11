@@ -147,40 +147,35 @@ export const usePaperStore = create<PaperStore>((set, get) => ({
   },
   
   savePaper: (paperId) => set((state) => {
-    // Find the paper first
-    const paperExists = state.papers.some(p => p.id === paperId);
-    if (!paperExists) return {};
+    // Check if paper exists
+    const paperIndex = state.papers.findIndex(p => p.id === paperId);
+    if (paperIndex === -1) return {};
     
-    // Only update if the paper exists and isn't already saved
-    if (state.papers.find(p => p.id === paperId)?.saved === true) {
-      return {}; // Paper is already saved, return empty object to prevent update
-    }
+    // Check if paper is already saved
+    if (state.papers[paperIndex].saved) return {};
     
-    return {
-      papers: state.papers.map(paper => 
-        paper.id === paperId ? { ...paper, saved: true } : paper
-      )
-    };
+    // Create a new papers array with the updated paper
+    const updatedPapers = [...state.papers];
+    updatedPapers[paperIndex] = { ...updatedPapers[paperIndex], saved: true };
+    
+    return { papers: updatedPapers };
   }),
   
   unsavePaper: (paperId) => set((state) => {
-    // Find the paper first
-    const paperExists = state.papers.some(p => p.id === paperId);
-    if (!paperExists) return {};
+    // Check if paper exists
+    const paperIndex = state.papers.findIndex(p => p.id === paperId);
+    if (paperIndex === -1) return {};
     
-    // Only update if the paper exists and is currently saved
-    if (state.papers.find(p => p.id === paperId)?.saved === false) {
-      return {}; // Paper is already unsaved, return empty object to prevent update
-    }
+    // Check if paper is already unsaved
+    if (!state.papers[paperIndex].saved) return {};
     
-    return {
-      papers: state.papers.map(paper => 
-        paper.id === paperId ? { ...paper, saved: false } : paper
-      )
-    };
+    // Create a new papers array with the updated paper
+    const updatedPapers = [...state.papers];
+    updatedPapers[paperIndex] = { ...updatedPapers[paperIndex], saved: false };
+    
+    return { papers: updatedPapers };
   }),
   
-  // Optimize viewPaper to avoid unnecessary updates
   viewPaper: (paperId) => set((state) => {
     // First check if the paper exists
     if (!state.papers.some(paper => paper.id === paperId)) {
@@ -192,7 +187,7 @@ export const usePaperStore = create<PaperStore>((set, get) => ({
       return {}; // Already at the top, no need to update
     }
     
-    // Now update the recently viewed list
+    // Now update the recently viewed list without modifying other state
     return {
       recentlyViewed: [
         paperId, 
