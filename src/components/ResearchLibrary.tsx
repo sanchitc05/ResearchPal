@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from "react";
 import { 
   Search, 
@@ -28,10 +29,13 @@ import { usePaperStore, Paper } from "@/store/paperStore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
+// Separate component to prevent unnecessary rerenders
 const PaperCard: React.FC<{ paper: Paper }> = ({ paper }) => {
+  const navigate = useNavigate();
+  
+  // Use separate selectors to minimize re-renders
   const savePaper = usePaperStore(state => state.savePaper);
   const unsavePaper = usePaperStore(state => state.unsavePaper);
-  const navigate = useNavigate();
 
   const handleSaveToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -122,35 +126,37 @@ const ResearchLibrary: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   
-  const { papers, recentlyViewed, searchPapers } = usePaperStore(state => ({
+  // Use a stable selector function that doesn't change between renders
+  const storeData = usePaperStore(state => ({
     papers: state.papers,
     recentlyViewed: state.recentlyViewed,
     searchPapers: state.searchPapers
   }));
   
+  // Memoize derived data to prevent recalculations on every render
+  const filteredPapers = useMemo(() => {
+    if (searchTerm.trim()) {
+      return storeData.searchPapers(searchTerm);
+    }
+    return storeData.papers;
+  }, [searchTerm, storeData.papers, storeData.searchPapers]);
+  
   const savedPapers = useMemo(() => 
-    papers.filter(paper => paper.saved),
-    [papers]
+    storeData.papers.filter(paper => paper.saved),
+    [storeData.papers]
   );
   
   const summarizedPapers = useMemo(() => 
-    papers.filter(paper => paper.summarized),
-    [papers]
+    storeData.papers.filter(paper => paper.summarized),
+    [storeData.papers]
   );
   
   const recentPapers = useMemo(() => 
-    recentlyViewed
-      .map(id => papers.find(p => p.id === id))
+    storeData.recentlyViewed
+      .map(id => storeData.papers.find(p => p.id === id))
       .filter(Boolean) as Paper[],
-    [recentlyViewed, papers]
+    [storeData.recentlyViewed, storeData.papers]
   );
-  
-  const filteredPapers = useMemo(() => {
-    if (searchTerm.trim()) {
-      return searchPapers(searchTerm);
-    }
-    return papers;
-  }, [searchTerm, papers, searchPapers]);
   
   return (
     <div className="p-6">

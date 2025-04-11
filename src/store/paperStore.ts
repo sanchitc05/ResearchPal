@@ -152,9 +152,10 @@ export const usePaperStore = create<PaperStore>((set, get) => ({
     )
   })),
   
+  // Fix the viewPaper method to only update when necessary
   viewPaper: (paperId) => set((state) => {
-    // Only update if the paper isn't already at the top of recently viewed
-    if (state.recentlyViewed[0] !== paperId) {
+    // Only update if the paper exists and isn't already at the top of recently viewed
+    if (state.papers.some(paper => paper.id === paperId) && state.recentlyViewed[0] !== paperId) {
       return {
         recentlyViewed: [
           paperId, 
@@ -162,6 +163,7 @@ export const usePaperStore = create<PaperStore>((set, get) => ({
         ]
       };
     }
+    // Return empty object to avoid state update when nothing changes
     return {};
   }),
   
