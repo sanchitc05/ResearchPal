@@ -59,12 +59,11 @@ Writing research papers is a time-consuming and often isolating process. Current
 | Category        | Tech Used |
 |-----------------|-----------|
 | *Frontend*    | React.js, Tailwind CSS, Framer Motion, i18next |
-| *Backend*     | Django, Django REST Framework |
+| *Backend*     | TypeScript |
 | *Database*    | PostgreSQL (Primary), MongoDB (Optional) |
-| *Auth*        | JWT (Django + React) |
+| *Auth*        | JWT (Vite + React) |
 | *Plagiarism*  | Copyleaks API / spaCy / BERT |
 | *Translation* | Google Translate API / DeepL |
-| *Collab*      | Django Channels / Firebase (Optional) |
 | *Storage*     | AWS S3 / Firebase Storage |
 | *Deployment*  | Vercel (Frontend), Render/Heroku (Backend) |
 
