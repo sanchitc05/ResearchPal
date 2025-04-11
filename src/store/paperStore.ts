@@ -43,9 +43,7 @@ interface PaperStore {
   uploadPaperUrl: (url: string) => Promise<Paper>;
   savePaper: (paperId: string) => void;
   unsavePaper: (paperId: string) => void;
-  getSavedPapers: () => Paper[];
-  getRecentPapers: () => Paper[];
-  getSummarizedPapers: () => Paper[];
+  viewPaper: (paperId: string) => void;
   getPaperById: (id: string) => Paper | undefined;
   getCitation: (paperId: string, format: 'apa' | 'mla' | 'chicago' | 'harvard' | 'bibtex') => string;
   searchPapers: (query: string) => Paper[];
@@ -94,7 +92,7 @@ export const usePaperStore = create<PaperStore>((set, get) => ({
   
   addPaper: (paper) => set((state) => ({
     papers: [...state.papers, paper],
-    recentlyViewed: [paper.id, ...state.recentlyViewed.slice(0, 9)]
+    recentlyViewed: [paper.id, ...state.recentlyViewed.filter(id => id !== paper.id).slice(0, 9)]
   })),
   
   uploadPaperFile: async (file) => {
@@ -154,18 +152,18 @@ export const usePaperStore = create<PaperStore>((set, get) => ({
     )
   })),
   
-  getSavedPapers: () => {
-    return get().papers.filter(paper => paper.saved);
-  },
-  
-  getRecentPapers: () => {
-    const recents = get().recentlyViewed;
-    return recents.map(id => get().papers.find(p => p.id === id)).filter(Boolean) as Paper[];
-  },
-  
-  getSummarizedPapers: () => {
-    return get().papers.filter(paper => paper.summarized);
-  },
+  viewPaper: (paperId) => set((state) => {
+    // Only update if the paper isn't already at the top of recently viewed
+    if (state.recentlyViewed[0] !== paperId) {
+      return {
+        recentlyViewed: [
+          paperId, 
+          ...state.recentlyViewed.filter(id => id !== paperId).slice(0, 9)
+        ]
+      };
+    }
+    return state;
+  }),
   
   getPaperById: (id) => {
     return get().papers.find(paper => paper.id === id);
