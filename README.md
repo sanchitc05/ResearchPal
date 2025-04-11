@@ -1,73 +1,140 @@
-# Welcome to your Lovable project
+# 📚 ResearchPal - Empowering Smarter Academic Writing ✨
 
-## Project info
+*ResearchPal* is an AI-powered web application developed as a *Hackathon Project* to transform the way students and researchers write academic papers. It provides an all-in-one platform to write, collaborate, translate, and verify research papers with real-time tools and AI assistance.
 
-**URL**: https://lovable.dev/projects/61e91c71-f780-4a62-86cf-8e3ba85eb8fb
+---
 
-## How can I edit this code?
+## 🚀 Demo (Coming Soon)
 
-There are several ways of editing your application.
+> A live demo will be available post-deployment.
 
-**Use Lovable**
+---
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/61e91c71-f780-4a62-86cf-8e3ba85eb8fb) and start prompting.
+## 🧠 Problem Statement
 
-Changes made via Lovable will be committed automatically to this repo.
+Writing research papers is a time-consuming and often isolating process. Current platforms are fragmented — lacking collaboration tools, plagiarism detection, and AI support — making academic writing inefficient and uninspired.
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🎯 Our Solution
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+*ResearchPal* streamlines research writing by combining:
 
-Follow these steps:
+- 🧠 *AI Assistance*
+- 🤝 *Real-time Collaboration*
+- 🧪 *Plagiarism Detection*
+- 🌍 *Multilingual Support*
+- 🔥 *Trending Research Discovery*
+- 📄 *One-click PDF/DOCX Export*
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+---
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 💡 Key Features
 
-# Step 3: Install the necessary dependencies.
-npm i
+- ✅ *Plagiarism Checker*  
+  Integrates Copyleaks API / custom NLP tools to ensure originality.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+- 🧑‍🤝‍🧑 *Collaborative Writing*  
+  Invite teammates to contribute in real-time.
 
-**Edit a file directly in GitHub**
+- 🔍 *Trending Research Feed*  
+  Discover hot research topics using journal APIs or scraping.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- 🌐 *Multilingual Support*  
+  Translate research into multiple languages with Google Translate or DeepL API.
 
-**Use GitHub Codespaces**
+- 📝 *Document Editor & Export*  
+  Clean, rich-text editor with export to PDF/DOCX.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- 🔐 *JWT Authentication*  
+  Secure user signup and login system.
 
-## What technologies are used for this project?
+- 🌈 *Responsive UI*  
+  Modern dashboard with smooth animations and clean design.
 
-This project is built with:
+---
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🛠 Tech Stack
 
-## How can I deploy this project?
+| Category        | Tech Used |
+|-----------------|-----------|
+| *Frontend*    | React.js, Tailwind CSS, Framer Motion, i18next |
+| *Backend*     | Django, Django REST Framework |
+| *Database*    | PostgreSQL (Primary), MongoDB (Optional) |
+| *Auth*        | JWT (Django + React) |
+| *Plagiarism*  | Copyleaks API / spaCy / BERT |
+| *Translation* | Google Translate API / DeepL |
+| *Collab*      | Django Channels / Firebase (Optional) |
+| *Storage*     | AWS S3 / Firebase Storage |
+| *Deployment*  | Vercel (Frontend), Render/Heroku (Backend) |
 
-Simply open [Lovable](https://lovable.dev/projects/61e91c71-f780-4a62-86cf-8e3ba85eb8fb) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+## 🧭 System Workflow
 
-Yes it is!
+researchpal-frontend/
+├── public/
+├── src/
+│   ├── assets/
+│   ├── components/
+│   │   ├── Navbar.jsx
+│   │   ├── Editor.jsx
+│   │   ├── Auth/
+│   │   │   ├── Login.jsx
+│   │   │   └── Register.jsx
+│   │   └── Dashboard.jsx
+│   ├── pages/
+│   │   ├── Home.jsx
+│   │   ├── NewPaper.jsx
+│   │   ├── Trending.jsx
+│   │   └── Export.jsx
+│   ├── context/
+│   │   └── AuthContext.jsx
+│   ├── App.jsx
+│   ├── index.js
+│   └── styles/
+│       └── tailwind.css
+├── .env
+├── package.json
+└── tailwind.config.js
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 👥 Target Users
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- 🎓 Students  
+- 🧑‍🔬 Researchers  
+- 🏫 Academic Institutions  
+
+---
+
+## 📌 Next Steps
+
+- Finalize UI/UX wireframes  
+- Build MVP with core features (editor + auth + plagiarism check)  
+- Test collaboration and translation features  
+- Polish and deploy for hackathon demo  
+
+---
+
+## ✨ Hackathon Note
+
+This project is being built as part of a *Hackathon*, with the aim to bring innovation to academic writing using AI and modern web technologies. We’re excited to solve real problems faced by researchers and students!
+
+---
+
+## 🤝 Team
+
+- *Developer & Idea Lead*: Sanchit Chauhan
+- *Frontend Developer*: Jashandeep Singh
+- *Backend Developer*: Sneha Singhania
+- *Backend Developer*: Harsh Verma
+
+---
+
+## 📄 License
+
+This project is open-source and available under the [MIT License](LICENSE).
+
+---
+
+> “ResearchPal is your AI-powered companion for writing smarter, faster, and more collaboratively.”
