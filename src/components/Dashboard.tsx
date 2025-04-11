@@ -1,5 +1,5 @@
 
-import React, { useMemo } from "react";
+import React from "react";
 import { 
   BookOpen, 
   FilePlus, 
@@ -16,15 +16,15 @@ import { usePaperStore } from "@/store/paperStore";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
-  // Use the store with a single selector to prevent infinite re-renders
-  const paperStats = usePaperStore(state => ({
-    papersCount: state.papers.length,
-    savedCount: state.papers.filter(p => p.saved).length,
-    summarizedCount: state.papers.filter(p => p.summarized).length
-  }));
+  // Use primitive selectors instead of object selectors to prevent infinite re-renders
+  const papersCount = usePaperStore(state => state.papers.length);
+  const savedCount = usePaperStore(state => state.papers.filter(p => p.saved).length);
+  const summarizedCount = usePaperStore(state => state.papers.filter(p => p.summarized).length);
   
-  // Use a separate selector for the sample papers to display
-  const samplePapers = usePaperStore(state => state.papers.slice(0, 3));
+  // Use a stable reference for the sample papers
+  const samplePapers = usePaperStore(state => 
+    state.papers.slice(0, 3)
+  );
   
   const navigate = useNavigate();
 
@@ -50,15 +50,15 @@ const Dashboard: React.FC = () => {
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <span>Papers</span>
-                <span className="font-medium">{paperStats.papersCount}</span>
+                <span className="font-medium">{papersCount}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Citations</span>
-                <span className="font-medium">{paperStats.papersCount}</span>
+                <span className="font-medium">{papersCount}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Saved summaries</span>
-                <span className="font-medium">{paperStats.summarizedCount}</span>
+                <span className="font-medium">{summarizedCount}</span>
               </div>
               <Button 
                 className="w-full mt-4 bg-scholar-navy hover:bg-scholar-navy/90 text-white"

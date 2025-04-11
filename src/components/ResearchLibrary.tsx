@@ -31,12 +31,12 @@ const ResearchLibrary: React.FC = () => {
     [papers]
   );
   
-  const recentPapers = useMemo(() => 
-    recentlyViewed
+  const recentPapers = useMemo(() => {
+    if (!recentlyViewed || !papers) return [];
+    return recentlyViewed
       .map(id => papers.find(p => p.id === id))
-      .filter(Boolean) as typeof papers,
-    [recentlyViewed, papers]
-  );
+      .filter(Boolean) as typeof papers;
+  }, [recentlyViewed, papers]);
   
   return (
     <div className="p-6">

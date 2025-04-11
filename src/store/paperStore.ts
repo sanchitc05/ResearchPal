@@ -93,7 +93,7 @@ export const usePaperStore = create<PaperStore>((set, get) => ({
   addPaper: (paper) => set((state) => {
     // Check if paper already exists to prevent duplicate papers
     if (state.papers.some(p => p.id === paper.id)) {
-      return {}; // Return empty object to prevent state update
+      return state; // Return unchanged state to prevent update
     }
     return {
       papers: [...state.papers, paper],
@@ -149,10 +149,10 @@ export const usePaperStore = create<PaperStore>((set, get) => ({
   savePaper: (paperId) => set((state) => {
     // Check if paper exists
     const paperIndex = state.papers.findIndex(p => p.id === paperId);
-    if (paperIndex === -1) return {};
+    if (paperIndex === -1) return state;
     
     // Check if paper is already saved
-    if (state.papers[paperIndex].saved) return {};
+    if (state.papers[paperIndex].saved) return state;
     
     // Create a new papers array with the updated paper
     const updatedPapers = [...state.papers];
@@ -164,10 +164,10 @@ export const usePaperStore = create<PaperStore>((set, get) => ({
   unsavePaper: (paperId) => set((state) => {
     // Check if paper exists
     const paperIndex = state.papers.findIndex(p => p.id === paperId);
-    if (paperIndex === -1) return {};
+    if (paperIndex === -1) return state;
     
     // Check if paper is already unsaved
-    if (!state.papers[paperIndex].saved) return {};
+    if (!state.papers[paperIndex].saved) return state;
     
     // Create a new papers array with the updated paper
     const updatedPapers = [...state.papers];
@@ -179,12 +179,12 @@ export const usePaperStore = create<PaperStore>((set, get) => ({
   viewPaper: (paperId) => set((state) => {
     // First check if the paper exists
     if (!state.papers.some(paper => paper.id === paperId)) {
-      return {}; // Paper doesn't exist, return empty object to prevent state update
+      return state; // Paper doesn't exist, return unchanged state
     }
     
     // Check if paper is already at the top of the recently viewed list
     if (state.recentlyViewed[0] === paperId) {
-      return {}; // Already at the top, no need to update
+      return state; // Already at the top, no need to update
     }
     
     // Now update the recently viewed list without modifying other state
