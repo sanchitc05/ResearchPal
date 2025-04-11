@@ -12,8 +12,15 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import PaperUpload from "./PaperUpload";
+import { usePaperStore } from "@/store/paperStore";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
+  const papers = usePaperStore(state => state.papers);
+  const savedPapers = usePaperStore(state => state.getSavedPapers());
+  const summarizedPapers = usePaperStore(state => state.getSummarizedPapers());
+  const navigate = useNavigate();
+
   return (
     <div className="p-6">
       <div className="mb-8">
@@ -36,17 +43,20 @@ const Dashboard: React.FC = () => {
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <span>Papers</span>
-                <span className="font-medium">0</span>
+                <span className="font-medium">{papers.length}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Citations</span>
-                <span className="font-medium">0</span>
+                <span className="font-medium">{papers.length}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Saved summaries</span>
-                <span className="font-medium">0</span>
+                <span className="font-medium">{summarizedPapers.length}</span>
               </div>
-              <Button className="w-full mt-4 scholar-btn-primary">
+              <Button 
+                className="w-full mt-4 bg-scholar-navy hover:bg-scholar-navy/90 text-white"
+                onClick={() => navigate("/library")}
+              >
                 <FileText className="h-4 w-4 mr-2" />
                 View Library
               </Button>
@@ -64,15 +74,34 @@ const Dashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <Button variant="outline" className="w-full justify-start">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => {
+                  navigate("/paper/transformer-paper-001");
+                }}
+              >
                 <FileText className="h-4 w-4 mr-2" />
                 Summarize a paper
               </Button>
-              <Button variant="outline" className="w-full justify-start">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => {
+                  navigate("/paper/transformer-paper-001");
+                }}
+              >
                 <AlertCircle className="h-4 w-4 mr-2" />
                 Answer research question
               </Button>
-              <Button variant="outline" className="w-full justify-start">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => {
+                  // In a real app, this would navigate to a trends page
+                  navigate("/");
+                }}
+              >
                 <TrendingUp className="h-4 w-4 mr-2" />
                 Analyze research trends
               </Button>
@@ -89,11 +118,27 @@ const Dashboard: React.FC = () => {
             <CardDescription>Your research journey</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-6 text-scholar-darkgray">
-              <FilePlus className="h-12 w-12 mx-auto mb-3 opacity-30" />
-              <p>No recent activity</p>
-              <p className="text-sm mt-1">Upload your first paper to get started</p>
-            </div>
+            {papers.length > 1 ? (
+              <div className="space-y-3">
+                {papers.slice(0, 3).map((paper, index) => (
+                  <div key={paper.id} className="flex items-start gap-3 pb-2 border-b border-gray-100 last:border-0">
+                    <div className="bg-scholar-cream/50 rounded-full p-2 mt-1">
+                      <FileText className="h-4 w-4 text-scholar-navy" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium line-clamp-1">{paper.title}</p>
+                      <p className="text-xs text-scholar-darkgray">{paper.authors}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-6 text-scholar-darkgray">
+                <FilePlus className="h-12 w-12 mx-auto mb-3 opacity-30" />
+                <p>No recent activity</p>
+                <p className="text-sm mt-1">Upload your first paper to get started</p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

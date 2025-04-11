@@ -25,6 +25,88 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { usePaperStore, Paper } from "@/store/paperStore";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+
+const PaperCard: React.FC<{ paper: Paper }> = ({ paper }) => {
+  const savePaper = usePaperStore(state => state.savePaper);
+  const unsavePaper = usePaperStore(state => state.unsavePaper);
+  const navigate = useNavigate();
+
+  const handleSaveToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (paper.saved) {
+      unsavePaper(paper.id);
+      toast.success(`"${paper.title}" removed from saved papers`);
+    } else {
+      savePaper(paper.id);
+      toast.success(`"${paper.title}" added to saved papers`);
+    }
+  };
+
+  const handleViewPaper = () => {
+    // In a real app, this would navigate to a paper details page with the ID
+    navigate("/");
+    toast.success(`Viewing paper: ${paper.title}`);
+  };
+
+  return (
+    <div 
+      className="border rounded-lg p-4 hover:border-scholar-navy transition-colors cursor-pointer bg-white"
+      onClick={handleViewPaper}
+    >
+      <div className="flex items-start justify-between">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            {paper.topics.map((topic, i) => (
+              <Badge key={i} variant="outline" className="text-xs">{topic}</Badge>
+            ))}
+          </div>
+          <h3 className="text-lg font-medium mb-1">{paper.title}</h3>
+          <p className="text-sm text-scholar-darkgray mb-2">{paper.authors}</p>
+          <p className="text-xs text-scholar-darkgray">{paper.publication}, {paper.year}</p>
+        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()}>
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+              <FileText className="h-4 w-4 mr-2" />
+              <span>View PDF</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSaveToggle}>
+              <Bookmark className="h-4 w-4 mr-2" />
+              <span>{paper.saved ? "Unsave Paper" : "Save Paper"}</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+              <Download className="h-4 w-4 mr-2" />
+              <span>Download</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+              <Share className="h-4 w-4 mr-2" />
+              <span>Share</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="flex items-center gap-2 mt-4">
+        <Button variant="outline" size="sm" onClick={(e) => e.stopPropagation()}>
+          <FileText className="h-3.5 w-3.5 mr-1" />
+          <span>View</span>
+        </Button>
+        <Button variant="outline" size="sm" onClick={(e) => e.stopPropagation()}>
+          <BookOpen className="h-3.5 w-3.5 mr-1" />
+          <span>Summary</span>
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 const EmptyLibrary = () => (
   <div className="text-center py-16 px-4">
@@ -34,17 +116,28 @@ const EmptyLibrary = () => (
       Upload papers or provide URLs to build your personal research collection. 
       All papers will be processed by AI for easy searching and analysis.
     </p>
-    <Button className="scholar-btn-primary">Upload Your First Paper</Button>
+    <Button className="bg-scholar-navy hover:bg-scholar-navy/90 text-white">Upload Your First Paper</Button>
   </div>
 );
 
-// This would be populated with actual papers
-const samplePapers = [
-  // Empty for now - we'll add when needed
-];
-
 const ResearchLibrary: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const papers = usePaperStore(state => state.papers);
+  const savedPapers = usePaperStore(state => state.getSavedPapers());
+  const recentPapers = usePaperStore(state => state.getRecentPapers());
+  const summarizedPapers = usePaperStore(state => state.getSummarizedPapers());
+  const searchPapers = usePaperStore(state => state.searchPapers);
+  
+  const [filteredPapers, setFilteredPapers] = useState<Paper[]>([]);
+  
+  // Update filtered papers when search term changes
+  React.useEffect(() => {
+    if (searchTerm.trim()) {
+      setFilteredPapers(searchPapers(searchTerm));
+    } else {
+      setFilteredPapers(papers);
+    }
+  }, [searchTerm, papers, searchPapers]);
   
   return (
     <div className="p-6">
@@ -113,25 +206,51 @@ const ResearchLibrary: React.FC = () => {
         </TabsList>
         
         <TabsContent value="all" className="mt-0">
-          {samplePapers.length === 0 ? (
+          {filteredPapers.length === 0 ? (
             <EmptyLibrary />
           ) : (
-            <div className="grid gap-4">
-              {/* Paper items would go here */}
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {filteredPapers.map(paper => (
+                <PaperCard key={paper.id} paper={paper} />
+              ))}
             </div>
           )}
         </TabsContent>
         
         <TabsContent value="recent" className="mt-0">
-          <EmptyLibrary />
+          {recentPapers.length === 0 ? (
+            <EmptyLibrary />
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {recentPapers.map(paper => (
+                <PaperCard key={paper.id} paper={paper} />
+              ))}
+            </div>
+          )}
         </TabsContent>
         
         <TabsContent value="saved" className="mt-0">
-          <EmptyLibrary />
+          {savedPapers.length === 0 ? (
+            <EmptyLibrary />
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {savedPapers.map(paper => (
+                <PaperCard key={paper.id} paper={paper} />
+              ))}
+            </div>
+          )}
         </TabsContent>
         
         <TabsContent value="summarized" className="mt-0">
-          <EmptyLibrary />
+          {summarizedPapers.length === 0 ? (
+            <EmptyLibrary />
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {summarizedPapers.map(paper => (
+                <PaperCard key={paper.id} paper={paper} />
+              ))}
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </div>

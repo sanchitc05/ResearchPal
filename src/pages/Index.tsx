@@ -18,9 +18,19 @@ import {
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { Link, useNavigate } from "react-router-dom";
+import { usePaperStore } from "@/store/paperStore";
 
 const Index = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const navigate = useNavigate();
+  const savedPapers = usePaperStore(state => state.getSavedPapers());
+  const recentPapers = usePaperStore(state => state.getRecentPapers());
+  
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+  };
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -51,19 +61,35 @@ const Index = () => {
             </div>
             
             <nav className="flex-1 px-2 space-y-1">
-              <Button variant="ghost" className={`w-full justify-start mb-1 ${!sidebarOpen && 'md:justify-center'}`}>
+              <Button 
+                variant="ghost" 
+                className={`w-full justify-start mb-1 ${!sidebarOpen && 'md:justify-center'} ${activeTab === "dashboard" ? "bg-scholar-cream text-scholar-navy" : ""}`}
+                onClick={() => handleTabChange("dashboard")}
+              >
                 <Home className="h-5 w-5 mr-3" />
                 <span className={`${!sidebarOpen && 'md:hidden'}`}>Dashboard</span>
               </Button>
-              <Button variant="ghost" className={`w-full justify-start mb-1 ${!sidebarOpen && 'md:justify-center'}`}>
+              <Button 
+                variant="ghost" 
+                className={`w-full justify-start mb-1 ${!sidebarOpen && 'md:justify-center'} ${activeTab === "library" ? "bg-scholar-cream text-scholar-navy" : ""}`}
+                onClick={() => handleTabChange("library")}
+              >
                 <BookOpen className="h-5 w-5 mr-3" />
                 <span className={`${!sidebarOpen && 'md:hidden'}`}>Research Library</span>
               </Button>
-              <Button variant="ghost" className={`w-full justify-start mb-1 ${!sidebarOpen && 'md:justify-center'}`}>
+              <Button 
+                variant="ghost" 
+                className={`w-full justify-start mb-1 ${!sidebarOpen && 'md:justify-center'}`}
+                onClick={() => navigate("/paper/transformer-paper-001")}
+              >
                 <Sparkles className="h-5 w-5 mr-3" />
                 <span className={`${!sidebarOpen && 'md:hidden'}`}>AI Insights</span>
               </Button>
-              <Button variant="ghost" className={`w-full justify-start mb-1 ${!sidebarOpen && 'md:justify-center'}`}>
+              <Button 
+                variant="ghost" 
+                className={`w-full justify-start mb-1 ${!sidebarOpen && 'md:justify-center'}`}
+                onClick={() => navigate("/citation")}
+              >
                 <FileText className="h-5 w-5 mr-3" />
                 <span className={`${!sidebarOpen && 'md:hidden'}`}>Citations</span>
               </Button>
@@ -76,13 +102,31 @@ const Index = () => {
               )}
               {!sidebarOpen && <div className="my-4" />}
               
-              <Button variant="ghost" className={`w-full justify-start mb-1 ${!sidebarOpen && 'md:justify-center'}`}>
+              <Button 
+                variant="ghost" 
+                className={`w-full justify-start mb-1 ${!sidebarOpen && 'md:justify-center'}`}
+                onClick={() => {
+                  handleTabChange("library");
+                  // In a real app, this would select the saved papers tab in the library
+                }}
+              >
                 <BookmarkPlus className="h-5 w-5 mr-3" />
-                <span className={`${!sidebarOpen && 'md:hidden'}`}>Saved Papers</span>
+                <span className={`${!sidebarOpen && 'md:hidden'}`}>
+                  Saved Papers {savedPapers.length > 0 && `(${savedPapers.length})`}
+                </span>
               </Button>
-              <Button variant="ghost" className={`w-full justify-start mb-1 ${!sidebarOpen && 'md:justify-center'}`}>
+              <Button 
+                variant="ghost" 
+                className={`w-full justify-start mb-1 ${!sidebarOpen && 'md:justify-center'}`}
+                onClick={() => {
+                  handleTabChange("library");
+                  // In a real app, this would select the recent papers tab in the library
+                }}
+              >
                 <Clock className="h-5 w-5 mr-3" />
-                <span className={`${!sidebarOpen && 'md:hidden'}`}>Recently Viewed</span>
+                <span className={`${!sidebarOpen && 'md:hidden'}`}>
+                  Recently Viewed {recentPapers.length > 0 && `(${recentPapers.length})`}
+                </span>
               </Button>
             </nav>
             
@@ -101,7 +145,7 @@ const Index = () => {
         
         {/* Main content */}
         <main className="flex-1 overflow-y-auto bg-scholar-cream">
-          <Tabs defaultValue="dashboard">
+          <Tabs value={activeTab} onValueChange={handleTabChange}>
             <TabsContent value="dashboard" className="mt-0">
               <Dashboard />
             </TabsContent>

@@ -6,37 +6,46 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { usePaperStore } from "@/store/paperStore";
 
 const PaperUpload: React.FC = () => {
   const [uploadLoading, setUploadLoading] = useState(false);
   const [urlLoading, setUrlLoading] = useState(false);
   const [paperUrl, setPaperUrl] = useState("");
+  const uploadPaperFile = usePaperStore(state => state.uploadPaperFile);
+  const uploadPaperUrl = usePaperStore(state => state.uploadPaperUrl);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
     
     const file = e.target.files[0];
     setUploadLoading(true);
     
-    // Simulate upload process
-    setTimeout(() => {
-      setUploadLoading(false);
+    try {
+      const paper = await uploadPaperFile(file);
       toast.success(`"${file.name}" uploaded successfully!`);
-    }, 1500);
+    } catch (error) {
+      toast.error("Failed to upload paper. Please try again.");
+    } finally {
+      setUploadLoading(false);
+    }
   };
 
-  const handleUrlSubmit = (e: React.FormEvent) => {
+  const handleUrlSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!paperUrl.trim()) return;
     
     setUrlLoading(true);
     
-    // Simulate URL processing
-    setTimeout(() => {
-      setUrlLoading(false);
+    try {
+      const paper = await uploadPaperUrl(paperUrl);
       toast.success("Paper from URL processed successfully!");
       setPaperUrl("");
-    }, 1500);
+    } catch (error) {
+      toast.error("Failed to process URL. Please check and try again.");
+    } finally {
+      setUrlLoading(false);
+    }
   };
 
   return (
@@ -57,9 +66,9 @@ const PaperUpload: React.FC = () => {
               </p>
               
               <div className="flex justify-center">
-                <label className="scholar-btn-primary flex items-center cursor-pointer">
+                <label className="bg-scholar-navy hover:bg-scholar-navy/90 text-white rounded-md px-4 py-2 flex items-center cursor-pointer">
                   <Upload className="h-4 w-4 mr-2" />
-                  <span>Select PDF File</span>
+                  <span>{uploadLoading ? "Uploading..." : "Select PDF File"}</span>
                   <input 
                     type="file" 
                     accept=".pdf" 
@@ -92,14 +101,14 @@ const PaperUpload: React.FC = () => {
                   <Input
                     type="text"
                     placeholder="https://arxiv.org/abs/2303.08774"
-                    className="scholar-input flex-grow"
+                    className="border border-gray-300 px-4 py-2 rounded flex-grow"
                     value={paperUrl}
                     onChange={(e) => setPaperUrl(e.target.value)}
                     disabled={urlLoading}
                   />
                   <Button 
                     type="submit" 
-                    className="scholar-btn-primary whitespace-nowrap"
+                    className="bg-scholar-navy hover:bg-scholar-navy/90 text-white whitespace-nowrap"
                     disabled={urlLoading || !paperUrl.trim()}
                   >
                     {urlLoading ? "Processing..." : "Process Paper"}

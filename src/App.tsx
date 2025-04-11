@@ -6,6 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import CitationPage from "./pages/CitationPage";
+import PaperDetailsPage from "./pages/PaperDetailsPage";
 
 const App = () => {
   // Create a new QueryClient instance inside the component
@@ -19,6 +21,8 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/citation" element={<CitationPage />} />
+            <Route path="/paper/:id" element={<PaperDetailsPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
