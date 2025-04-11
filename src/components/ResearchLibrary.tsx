@@ -123,10 +123,15 @@ const EmptyLibrary = () => (
 const ResearchLibrary: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const papers = usePaperStore(state => state.papers);
-  const savedPapers = usePaperStore(state => state.getSavedPapers());
-  const recentPapers = usePaperStore(state => state.getRecentPapers());
-  const summarizedPapers = usePaperStore(state => state.getSummarizedPapers());
+  const recentlyViewed = usePaperStore(state => state.recentlyViewed);
   const searchPapers = usePaperStore(state => state.searchPapers);
+  
+  // Filter papers directly instead of using the removed helper functions
+  const savedPapers = papers.filter(paper => paper.saved);
+  const summarizedPapers = papers.filter(paper => paper.summarized);
+  const recentPapers = recentlyViewed
+    .map(id => papers.find(p => p.id === id))
+    .filter(Boolean) as Paper[];
   
   const [filteredPapers, setFilteredPapers] = useState<Paper[]>([]);
   

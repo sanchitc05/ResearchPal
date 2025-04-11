@@ -17,8 +17,8 @@ import { useNavigate } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
   const papers = usePaperStore(state => state.papers);
-  const savedPapers = usePaperStore(state => state.getSavedPapers());
-  const summarizedPapers = usePaperStore(state => state.getSummarizedPapers());
+  const savedPapers = usePaperStore(state => state.papers.filter(paper => paper.saved));
+  const summarizedPapers = usePaperStore(state => state.papers.filter(paper => paper.summarized));
   const navigate = useNavigate();
 
   return (
