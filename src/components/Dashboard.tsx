@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useMemo } from "react";
 import { 
   BookOpen, 
   FilePlus, 
@@ -16,9 +16,20 @@ import { usePaperStore } from "@/store/paperStore";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
+  // Use a single selector to get papers data to avoid multiple store subscriptions
   const papers = usePaperStore(state => state.papers);
-  const savedPapers = usePaperStore(state => state.papers.filter(paper => paper.saved));
-  const summarizedPapers = usePaperStore(state => state.papers.filter(paper => paper.summarized));
+  
+  // Use useMemo to derive these values without triggering renders
+  const savedPapersCount = useMemo(() => 
+    papers.filter(paper => paper.saved).length, 
+    [papers]
+  );
+  
+  const summarizedPapersCount = useMemo(() => 
+    papers.filter(paper => paper.summarized).length, 
+    [papers]
+  );
+  
   const navigate = useNavigate();
 
   return (
@@ -51,7 +62,7 @@ const Dashboard: React.FC = () => {
               </div>
               <div className="flex justify-between items-center">
                 <span>Saved summaries</span>
-                <span className="font-medium">{summarizedPapers.length}</span>
+                <span className="font-medium">{summarizedPapersCount}</span>
               </div>
               <Button 
                 className="w-full mt-4 bg-scholar-navy hover:bg-scholar-navy/90 text-white"

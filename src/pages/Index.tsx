@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useMemo } from "react";
 import Header from "@/components/Header";
 import Dashboard from "@/components/Dashboard";
 import ResearchLibrary from "@/components/ResearchLibrary";
@@ -26,14 +26,23 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const navigate = useNavigate();
   
-  // Fix: Use the store properly with useCallback to prevent infinite loops
-  // Only read from the store once during rendering
-  const savedPapers = usePaperStore(state => state.papers.filter(paper => paper.saved));
-  const recentPapers = usePaperStore(state => 
-    state.recentlyViewed
-      .map(id => state.papers.find(p => p.id === id))
-      .filter(Boolean)
+  // Use a single store access for all paper data
+  const { papers, recentlyViewed } = usePaperStore(state => ({
+    papers: state.papers,
+    recentlyViewed: state.recentlyViewed,
+  }));
+  
+  // Derive saved papers count with useMemo to prevent unnecessary renders
+  const savedPapersCount = useMemo(() => 
+    papers.filter(paper => paper.saved).length, 
+    [papers]
   );
+  
+  // Derive recent papers with useMemo
+  const recentPapersCount = useMemo(() => {
+    const uniqueIds = new Set(recentlyViewed);
+    return uniqueIds.size;
+  }, [recentlyViewed]);
   
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -119,7 +128,7 @@ const Index = () => {
               >
                 <BookmarkPlus className="h-5 w-5 mr-3" />
                 <span className={`${!sidebarOpen && 'md:hidden'}`}>
-                  Saved Papers {savedPapers.length > 0 && `(${savedPapers.length})`}
+                  Saved Papers {savedPapersCount > 0 && `(${savedPapersCount})`}
                 </span>
               </Button>
               <Button 
@@ -132,7 +141,7 @@ const Index = () => {
               >
                 <Clock className="h-5 w-5 mr-3" />
                 <span className={`${!sidebarOpen && 'md:hidden'}`}>
-                  Recently Viewed {recentPapers.length > 0 && `(${recentPapers.length})`}
+                  Recently Viewed {recentPapersCount > 0 && `(${recentPapersCount})`}
                 </span>
               </Button>
             </nav>
